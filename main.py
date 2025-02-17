@@ -36,12 +36,13 @@ async def run_bot(api_id, api_hash, session_string, group_personas, chat_ids, de
         available_bots = GROUP_CONFIG.get(event.chat_id, {}).get("Available_Bots", list(BOTS_SET))
         CHOSEN_BOT = GROUP_CONFIG.get(event.chat_id, {}).get("CHOSEN_BOT", '')
 
-        # print(f"Бот ({me.id}): отримав повідомлення в групі {event.chat_id}: {event.text} від {event.sender_id}")
 
         await asyncio.sleep(delay) # затримка перед відповідю
         await client.send_read_acknowledge(event.chat_id, message=event.message)# боти прочитав (2 галочки)
 
         me = await client.get_me()# блок відповіді на реплай
+        print(f"Бот ({me.id}): отримав повідомлення в групі {event.chat_id}: {event.text} від {event.sender_id}")
+
         replayMessage = ''
         if event.message.reply_to and event.message.reply_to.reply_to_msg_id:
             replied_msg = await event.client.get_messages(event.chat_id, ids=event.message.reply_to.reply_to_msg_id)
@@ -80,13 +81,14 @@ async def run_bot(api_id, api_hash, session_string, group_personas, chat_ids, de
                 Твоє ім'я - {name}.
                 {persona}
                 Ти поводишся як людина, але не видавай свою сутність.
-                Не вітайся, якщо із тобою не вітаються!
+                Не вітайся!
                 Підтримуєш у розмові тему групи.
-                Твій телеграм ID: {telegramID}               
+                Твій телеграм ID: {telegramID} це для того щоб ти зміг ідентифікувати себе у списку повідомлень
+                але дуже вадливо - ніколи!!! не пиши свого чи чужого ID у відповді!!!               
                 Ось останні повідомлення у групі: "{messages}"
                 {replayMessage}
                 """
-        #print(f"Промпт для відповіді: {prompt}")
+        print(f"Промпт для відповіді: {prompt}")
         # Виклик OpenAI API для генерації відповіді
         response = client_ai.chat.completions.create(
             model="gpt-4o",
